@@ -11,10 +11,13 @@ import SearchIcon from '@material-ui/icons/Search';
 import DownloadIcon from '@material-ui/icons/CloudDownload';
 import PrintIcon from '@material-ui/icons/Print';
 import ViewColumnIcon from '@material-ui/icons/ViewColumn';
+import TableChartIcon from '@material-ui/icons/TableChart';
 import FilterIcon from '@material-ui/icons/FilterList';
 import ReactToPrint from 'react-to-print';
 import { withStyles } from '@material-ui/core/styles';
-import { createCSVDownload } from '../utils';
+import { createCSVDownload, createTABDownload, createXLSDownload } from '../utils';
+import TableViewHeader from './TableViewHeader';
+import TableToolbarDownload from './TableToolbarDownload';
 
 export const defaultToolbarStyles = theme => ({
   root: {},
@@ -131,6 +134,90 @@ class TableToolbar extends React.Component {
     createCSVDownload(columnsToDownload, dataToDownload, options);
   };
 
+  handleTABDownload = () => {
+    const { data, displayData, columns, options } = this.props;
+    let dataToDownload = data;
+    let columnsToDownload = columns;
+
+    if (options.downloadOptions && options.downloadOptions.filterOptions) {
+      // check rows first:
+      if (options.downloadOptions.filterOptions.useDisplayedRowsOnly) {
+        dataToDownload = displayData.map((row, index) => {
+          let i = -1;
+
+          // Help to preserve sort order in custom render columns
+          row.index = index;
+
+          return {
+            data: row.data.map(column => {
+              i += 1;
+
+              // if we have a custom render, which will appear as a react element, we must grab the actual value from data
+              // TODO: Create a utility function for checking whether or not something is a react object
+              return typeof column === 'object' && column !== null && !Array.isArray(column)
+                ? data[row.index].data[i]
+                : column;
+            }),
+          };
+        });
+      }
+
+      // now, check columns:
+      if (options.downloadOptions.filterOptions.useDisplayedColumnsOnly) {
+        columnsToDownload = columns.filter((_, index) => _.display === 'true');
+
+        dataToDownload = dataToDownload.map(row => {
+          row.data = row.data.filter((_, index) => columns[index].display === 'true');
+          return row;
+        });
+      }
+    }
+    const tabOptions = { ...options, downloadOptions: { filename: 'tableDownload.txt', separator: '\t' } };
+    createTABDownload(columnsToDownload, dataToDownload, tabOptions);
+  };
+
+  handleXLSDownload = () => {
+    const { data, displayData, columns, options } = this.props;
+    let dataToDownload = data;
+    let columnsToDownload = columns;
+
+    if (options.downloadOptions && options.downloadOptions.filterOptions) {
+      // check rows first:
+      if (options.downloadOptions.filterOptions.useDisplayedRowsOnly) {
+        dataToDownload = displayData.map((row, index) => {
+          let i = -1;
+
+          // Help to preserve sort order in custom render columns
+          row.index = index;
+
+          return {
+            data: row.data.map(column => {
+              i += 1;
+
+              // if we have a custom render, which will appear as a react element, we must grab the actual value from data
+              // TODO: Create a utility function for checking whether or not something is a react object
+              return typeof column === 'object' && column !== null && !Array.isArray(column)
+                ? data[row.index].data[i]
+                : column;
+            }),
+          };
+        });
+      }
+
+      // now, check columns:
+      if (options.downloadOptions.filterOptions.useDisplayedColumnsOnly) {
+        columnsToDownload = columns.filter((_, index) => _.display === 'true');
+
+        dataToDownload = dataToDownload.map(row => {
+          row.data = row.data.filter((_, index) => columns[index].display === 'true');
+          return row;
+        });
+      }
+    }
+    const xlsOptions = { ...options, downloadOptions: { filename: 'tableDownload.xlsx' } };
+    createXLSDownload(columnsToDownload, dataToDownload, xlsOptions);
+  };
+
   setActiveIcon = iconName => {
     this.setState(
       prevState => ({
@@ -218,9 +305,10 @@ class TableToolbar extends React.Component {
       toggleViewColumn,
       title,
       tableRef,
+      changeRowsPerPage,
     } = this.props;
 
-    const { search, downloadCsv, print, viewColumns, filterTable } = options.textLabels.toolbar;
+    const { search, downloadCsv, print, viewColumns, filterTable, viewTableOptions } = options.textLabels.toolbar;
     const { showSearch, searchText } = this.state;
 
     return (
@@ -260,7 +348,7 @@ class TableToolbar extends React.Component {
               </IconButton>
             </Tooltip>
           )}
-          {options.download && (
+          {options.download && !options.downloadExtended && (
             <Tooltip title={downloadCsv}>
               <IconButton
                 data-testid={downloadCsv + '-iconButton'}
@@ -270,6 +358,32 @@ class TableToolbar extends React.Component {
                 <DownloadIcon />
               </IconButton>
             </Tooltip>
+          )}
+          {options.download && options.downloadExtended && (
+            <Popover
+              refExit={this.setActiveIcon.bind(null)}
+              trigger={
+                <Tooltip title={downloadCsv} disableFocusListener>
+                  <IconButton
+                    data-testid={downloadCsv + '-iconButton'}
+                    aria-label={downloadCsv}
+                    classes={{ root: this.getActiveIcon(classes, 'downloadCsv') }}
+                    onClick={this.setActiveIcon.bind(null, 'downloadCsv')}>
+                    <DownloadIcon />
+                  </IconButton>
+                </Tooltip>
+              }
+              content={
+                <TableToolbarDownload
+                  data={data}
+                  columns={columns}
+                  options={options}
+                  handleCSVDownload={this.handleCSVDownload}
+                  handleTABDownload={this.handleTABDownload}
+                  handleXLSDownload={this.handleXLSDownload}
+                />
+              }
+            />
           )}
           {options.print && (
             <span>
@@ -306,6 +420,31 @@ class TableToolbar extends React.Component {
               }
               content={
                 <TableViewCol data={data} columns={columns} options={options} onColumnUpdate={toggleViewColumn} />
+              }
+            />
+          )}
+          {options.viewTableOptions && (
+            <Popover
+              refExit={this.setActiveIcon.bind(null)}
+              trigger={
+                <Tooltip title={viewTableOptions} disableFocusListener>
+                  <IconButton
+                    data-testid={viewTableOptions + '-iconButton'}
+                    aria-label={viewTableOptions}
+                    classes={{ root: this.getActiveIcon(classes, 'viewTableOptions') }}
+                    onClick={this.setActiveIcon.bind(null, 'viewTableOptions')}>
+                    <TableChartIcon />
+                  </IconButton>
+                </Tooltip>
+              }
+              content={
+                <TableViewHeader
+                  data={data}
+                  columns={columns}
+                  options={options}
+                  changeRowsPerPage={changeRowsPerPage}
+                  onColumnUpdate={toggleViewColumn}
+                />
               }
             />
           )}

@@ -5,6 +5,20 @@ import Chip from '@material-ui/core/Chip';
 
 class Example extends React.Component {
 
+  state = {
+    stickHead: false,
+    stickBlock: false,
+    stickSummary: false,
+    rowsPerPage: 10,
+  }
+
+  handleStickHead = (checked) => {
+    this.setState({stickHead: checked});
+  }
+  handleStickSummary = (checked) => {
+    this.setState({stickSummary: checked});
+  }
+
   render() {
     // const allTags = ['leave-message', 'frequently-busy', 'nice', 'grumpy', 'in-person', 'preferred', 'second-choice'];
     const columns = [
@@ -34,13 +48,24 @@ class Example extends React.Component {
         options: {
           filter: true,
           print: false,
+          hasSubHeader: true,
+          // customSubHeader: (options) => {
+          //   console.log(options);
+          //   return 1;
+          // }
         }
       },
       {
         name: "Salary",
         options: {
           filter: true,
-          sort: false
+          sort: false,
+          download: false,
+          hasSubHeader: true,
+          // customSubHeader: (options) => {
+          //   console.log(options);
+          //   return 1;
+          // }
         }
       },
       {
@@ -91,14 +116,44 @@ class Example extends React.Component {
       ["Mason Ray", "Computer Scientist", "San Francisco", 39, "$142,000", ['preferred']]
     ];
 
+    const dataSubHeader = 
+      ["", "", "", 30, "100,000", ""];
+
+    const generateRowsPerPageOptions = (min, max, increment = 5) => {
+      const options = [];
+      for (let i = min; i <= max; i = i + increment) {
+        options.push(i);
+      }
+      return options;
+    };
+
     const options = {
       filter: true,
       filterType: 'dropdown',
+      fixedHeader: this.state.stickHead,
+      fixedSubHeader: this.state.stickSummary,
+      viewTableOptions: true,
+      downloadExtended: false,
+      rowsPerPage: this.state.rowsPerPage,
+      onStickHead: this.handleStickHead,
+      onStickBlock: this.handleClick,
+      onStickSummary: this.handleStickSummary,
       responsive: 'scrollMaxHeight',
+      rowsPerPageOptions: generateRowsPerPageOptions(10, 100, 5),
+      onTableInit: (action, tableState) => {
+        console.log('onTableInit', action, tableState);
+      },
+      onTableChange: (action, tableState) => {
+        console.log('onTableChange', action, tableState);
+      },
+      onChangeRowsPerPage: (numberOfRows) => {
+        this.setState({...this.state, rowsPerPage: numberOfRows});
+        console.log(numberOfRows);
+      }
     };
 
     return (
-      <MUIDataTable title={"ACME Employee list"} data={data} columns={columns} options={options} />
+      <MUIDataTable title={"ACME Employee list"} data={data} dataSubHeader={dataSubHeader} columns={columns} options={options} />
     );
 
   }

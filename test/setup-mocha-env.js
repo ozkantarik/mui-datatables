@@ -14,6 +14,7 @@ function setupDom() {
   global.window = dom.window;
   global.document = window.document;
   global.Node = Node;
+  global.HTMLAnchorElement = window.HTMLAnchorElement;
 
   global.navigator = {
     userAgent: 'node.js',

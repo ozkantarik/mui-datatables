@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 import TableHeadCell from './TableHeadCell';
+import TableHeadCellSub from './TableHeadCellSub';
 import TableHeadRow from './TableHeadRow';
 import TableSelectCell from './TableSelectCell';
 
@@ -30,7 +31,7 @@ class TableHead extends React.Component {
   };
 
   render() {
-    const { classes, columns, count, options, data, setCellRef, selectedRows } = this.props;
+    const { classes, columns, count, options, data, dataSubHeader, setCellRef, selectedRows } = this.props;
 
     const numSelected = (selectedRows && selectedRows.data.length) || 0;
     const isDeterminate = numSelected > 0 && numSelected < count;
@@ -75,6 +76,24 @@ class TableHead extends React.Component {
               )),
           )}
         </TableHeadRow>
+        {options.fixedSubHeader && (
+          <TableHeadRow>
+            <TableHeadCellSub options={options}>{''}</TableHeadCellSub>
+            {columns.map(
+              (column, index) =>
+                column.display === 'true' &&
+                (column.hasSubHeader === true ? (
+                  <TableHeadCellSub key={`${index}_${index}`} options={options}>
+                    {dataSubHeader[index]}
+                  </TableHeadCellSub>
+                ) : (
+                  <TableHeadCellSub key={`${index}_${index}`} options={options}>
+                    {''}
+                  </TableHeadCellSub>
+                )),
+            )}
+          </TableHeadRow>
+        )}
       </MuiTableHead>
     );
   }

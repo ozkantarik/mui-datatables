@@ -78,7 +78,16 @@ const TABLE_LOAD = {
 };
 
 // Populate this list with anything that might render in the toolbar to determine if we hide the toolbar
-const TOOLBAR_ITEMS = ['title', 'filter', 'search', 'print', 'download', 'viewColumns', 'customToolbar'];
+const TOOLBAR_ITEMS = [
+  'title',
+  'filter',
+  'search',
+  'print',
+  'download',
+  'viewColumns',
+  'customToolbar',
+  'viewTableOptions',
+];
 
 const hasToolbarItem = (options, title) => {
   options.title = title;
@@ -92,6 +101,8 @@ class MUIDataTable extends React.Component {
     title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]).isRequired,
     /** Data used to describe table */
     data: PropTypes.array.isRequired,
+    /** Data used to describe table */
+    dataSubHeader: PropTypes.array,
     /** Columns used to describe table */
     columns: PropTypes.PropTypes.arrayOf(
       PropTypes.oneOfType([
@@ -105,6 +116,8 @@ class MUIDataTable extends React.Component {
             filter: PropTypes.bool,
             sort: PropTypes.bool,
             print: PropTypes.bool,
+            viewTableOptions: PropTypes.bool,
+            hasSubHeader: PropTypes.bool,
             searchable: PropTypes.bool,
             download: PropTypes.bool,
             viewColumns: PropTypes.bool,
@@ -136,6 +149,7 @@ class MUIDataTable extends React.Component {
       expandableRowsOnClick: PropTypes.bool,
       renderExpandableRow: PropTypes.func,
       customToolbar: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
+      customSubHeader: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
       customToolbarSelect: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
       customFooter: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
       customSearchRender: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
@@ -144,6 +158,8 @@ class MUIDataTable extends React.Component {
       onRowClick: PropTypes.func,
       onRowsExpand: PropTypes.func,
       onRowsSelect: PropTypes.func,
+      onStickHead: PropTypes.func,
+      onStickSummary: PropTypes.func,
       resizableColumns: PropTypes.bool,
       selectableRows: PropTypes.oneOfType([PropTypes.bool, PropTypes.oneOf(['none', 'single', 'multiple'])]),
       selectableRowsOnClick: PropTypes.bool,
@@ -159,6 +175,7 @@ class MUIDataTable extends React.Component {
       caseSensitive: PropTypes.bool,
       rowHover: PropTypes.bool,
       fixedHeader: PropTypes.bool,
+      fixedSubHeader: PropTypes.bool,
       page: PropTypes.number,
       count: PropTypes.number,
       rowsSelected: PropTypes.array,
@@ -176,6 +193,7 @@ class MUIDataTable extends React.Component {
       print: PropTypes.bool,
       viewColumns: PropTypes.bool,
       download: PropTypes.bool,
+      downloadExtended: PropTypes.bool,
       downloadOptions: PropTypes.shape({
         filename: PropTypes.string,
         separator: PropTypes.string,
@@ -194,6 +212,7 @@ class MUIDataTable extends React.Component {
     title: '',
     options: {},
     data: [],
+    dataSubHeader: [],
     columns: [],
   };
 
@@ -201,6 +220,7 @@ class MUIDataTable extends React.Component {
     announceText: null,
     activeColumn: null,
     data: [],
+    dataSubHeader: [],
     displayData: [],
     page: 0,
     rowsPerPage: 0,
@@ -244,6 +264,12 @@ class MUIDataTable extends React.Component {
   componentDidUpdate(prevProps) {
     if (this.props.data !== prevProps.data || this.props.columns !== prevProps.columns) {
       this.updateOptions(this.options, this.props);
+      this.setTableData(this.props, TABLE_LOAD.INITIAL, () => {
+        this.setTableAction('propsUpdate');
+      });
+    }
+
+    if (this.props.dataSubHeader !== prevProps.dataSubHeader) {
       this.setTableData(this.props, TABLE_LOAD.INITIAL, () => {
         this.setTableAction('propsUpdate');
       });
@@ -294,6 +320,7 @@ class MUIDataTable extends React.Component {
     serverSide: false,
     rowHover: true,
     fixedHeader: true,
+    fixedSubHeader: false,
     elevation: 4,
     rowsPerPage: 10,
     rowsPerPageOptions: [10, 15, 100],
@@ -304,6 +331,7 @@ class MUIDataTable extends React.Component {
     print: true,
     viewColumns: true,
     download: true,
+    downloadExtended: false,
     downloadOptions: {
       filename: 'tableDownload.csv',
       separator: ',',
@@ -634,6 +662,7 @@ class MUIDataTable extends React.Component {
         expandedRows: expandedRowsData,
         count: this.options.count,
         data: tableData,
+        dataSubHeader: props.dataSubHeader,
         displayData: this.getDisplayData(columns, tableData, filterList, searchText, tableMeta),
         previousSelectedRow: null,
       },
@@ -1261,6 +1290,7 @@ class MUIDataTable extends React.Component {
       announceText,
       activeColumn,
       data,
+      dataSubHeader,
       displayData,
       columns,
       page,
@@ -1326,6 +1356,7 @@ class MUIDataTable extends React.Component {
               title={title}
               toggleViewColumn={this.toggleViewColumn}
               setTableAction={this.setTableAction}
+              changeRowsPerPage={this.changeRowsPerPage}
             />
           )
         )}
@@ -1353,6 +1384,7 @@ class MUIDataTable extends React.Component {
               columns={columns}
               activeColumn={activeColumn}
               data={displayData}
+              dataSubHeader={dataSubHeader}
               count={rowCount}
               page={page}
               rowsPerPage={rowsPerPage}

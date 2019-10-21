@@ -18,6 +18,7 @@ const textLabels = {
     print: 'Print',
     viewColumns: 'View Columns',
     filterTable: 'Filter Table',
+    viewTableOptions: 'View Table Options',
   },
   filter: {
     all: 'All',
