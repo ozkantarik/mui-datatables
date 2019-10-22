@@ -91,7 +91,7 @@ class TableHead extends React.Component {
                   <TableHeadCellSub key={`${index}_${index}`} options={options}>
                     {Array.isArray(dataSubHeader[index]) &&
                       dataSubHeader[index].map((subheader, index) => (
-                        <Typography key={`${index}_${index}`} className={classes.subheader}>
+                        <Typography variant="body1" component="p" key={`${index}_${index}`} className={classes.subheader}>
                           {subheader}
                         </Typography>
                       ))}
