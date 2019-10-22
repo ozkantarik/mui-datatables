@@ -7,6 +7,7 @@ import TableHeadCell from './TableHeadCell';
 import TableHeadCellSub from './TableHeadCellSub';
 import TableHeadRow from './TableHeadRow';
 import TableSelectCell from './TableSelectCell';
+import Typography from '@material-ui/core/Typography';
 
 const defaultHeadStyles = theme => ({
   main: {},
@@ -14,6 +15,10 @@ const defaultHeadStyles = theme => ({
     [theme.breakpoints.down('sm')]: {
       display: 'none',
     },
+  },
+  subheader: {
+    fontSize: '14px',
+    whiteSpace: 'nowrap',
   },
 });
 
@@ -84,7 +89,12 @@ class TableHead extends React.Component {
                 column.display === 'true' &&
                 (column.hasSubHeader === true ? (
                   <TableHeadCellSub key={`${index}_${index}`} options={options}>
-                    {dataSubHeader[index]}
+                    {Array.isArray(dataSubHeader[index]) &&
+                      dataSubHeader[index].map((subheader, index) => (
+                        <Typography key={`${index}_${index}`} className={classes.subheader}>
+                          {subheader}
+                        </Typography>
+                      ))}
                   </TableHeadCellSub>
                 ) : (
                   <TableHeadCellSub key={`${index}_${index}`} options={options}>

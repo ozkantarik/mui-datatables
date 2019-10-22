@@ -2,13 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom";
 import MUIDataTable from "../../src";
 import Chip from '@material-ui/core/Chip';
-
 class Example extends React.Component {
 
   state = {
-    stickHead: false,
+    stickHead: true,
     stickBlock: false,
-    stickSummary: false,
+    stickSummary: true,
     rowsPerPage: 10,
   }
 
@@ -49,10 +48,6 @@ class Example extends React.Component {
           filter: true,
           print: false,
           hasSubHeader: true,
-          // customSubHeader: (options) => {
-          //   console.log(options);
-          //   return 1;
-          // }
         }
       },
       {
@@ -117,7 +112,7 @@ class Example extends React.Component {
     ];
 
     const dataSubHeader = 
-      ["", "", "", 30, "100,000", ""];
+      ['', '', '', [30, 301], ["100,000", "100,000"], [""]];
 
     const generateRowsPerPageOptions = (min, max, increment = 5) => {
       const options = [];
