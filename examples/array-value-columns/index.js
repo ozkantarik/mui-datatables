@@ -2,7 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom";
 import MUIDataTable from "../../src";
 import Chip from '@material-ui/core/Chip';
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+// import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+
+
 class Example extends React.Component {
 
   state = {
@@ -12,11 +14,7 @@ class Example extends React.Component {
     rowsPerPage: 10,
   }
 
-  getMuiTheme = () => createMuiTheme({
-    overrides: {
-      
-    }
-  })
+  
 
   handleStickHead = (checked) => {
     this.setState({stickHead: checked});
@@ -155,9 +153,7 @@ class Example extends React.Component {
     };
 
     return (
-      <MuiThemeProvider theme={this.getMuiTheme()}>
         <MUIDataTable title={"ACME Employee list"} data={data} dataSubHeader={dataSubHeader} columns={columns} options={options} />
-      </MuiThemeProvider>
       
     );
 
