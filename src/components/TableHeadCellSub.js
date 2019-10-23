@@ -40,8 +40,6 @@ class TableHeadCellSub extends React.Component {
   };
 
   state = {
-    isSortTooltipOpen: false,
-    isHintTooltipOpen: false,
   };
 
   handleKeyboardSortinput = e => {
@@ -57,8 +55,7 @@ class TableHeadCellSub extends React.Component {
   };
 
   render() {
-    const { children, classes, options, sortDirection } = this.props;
-    const sortActive = sortDirection !== 'none' && sortDirection !== undefined ? true : false;
+    const { children, classes, options } = this.props;
 
     const cellClass = classNames({
       [classes.root]: true,
@@ -70,7 +67,6 @@ class TableHeadCellSub extends React.Component {
         <div
           className={classNames({
             [classes.data]: true,
-            [classes.sortActive]: sortActive,
           })}>
           {children}
         </div>

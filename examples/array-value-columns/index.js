@@ -52,6 +52,13 @@ class Example extends React.Component {
         options: {
           filter: true,
           print: false,
+          sort: true,
+          multipleSortEnabled: true,
+          multipleSortOptions: {
+            label: 'Location',
+            name: 'SalaryName',
+            index: 2,
+          },
           hasSubHeader: true,
         }
       },
@@ -59,9 +66,15 @@ class Example extends React.Component {
         name: "Salary",
         options: {
           filter: true,
-          sort: false,
+          sort: true,
           download: false,
           hasSubHeader: true,
+          multipleSortEnabled: true,
+          multipleSortOptions: {
+            label: 'SalaryLbl',
+            name: 'SalaryName',
+            index: 1,
+          }
           // customSubHeader: (options) => {
           //   console.log(options);
           //   return 1;

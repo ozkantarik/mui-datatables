@@ -27,8 +27,8 @@ class TableHead extends React.Component {
     this.props.handleHeadUpdateRef(this.handleUpdateCheck);
   }
 
-  handleToggleColumn = index => {
-    this.props.toggleSort(index);
+  handleToggleColumn = (index, secondIndex) => {
+    this.props.toggleSort(index, secondIndex);
   };
 
   handleRowSelect = () => {
@@ -36,8 +36,7 @@ class TableHead extends React.Component {
   };
 
   render() {
-    const { classes, columns, count, options, data, dataSubHeader, setCellRef, selectedRows } = this.props;
-
+    const { activeColumn, activeSubColumn, classes, columns, count, options, data, dataSubHeader, setCellRef, selectedRows } = this.props;
     const numSelected = (selectedRows && selectedRows.data.length) || 0;
     const isDeterminate = numSelected > 0 && numSelected < count;
     const isChecked = numSelected === count ? true : false;
@@ -71,6 +70,8 @@ class TableHead extends React.Component {
                   ref={el => setCellRef(index + 1, findDOMNode(el))}
                   sort={column.sort}
                   sortDirection={column.sortDirection}
+                  activeColumn={activeColumn}
+                  activeSubColumn={activeSubColumn}
                   toggleSort={this.handleToggleColumn}
                   hint={column.hint}
                   print={column.print}

@@ -75,6 +75,8 @@ class TableHeadCell extends React.Component {
   state = {
     isSortTooltipOpen: false,
     isHintTooltipOpen: false,
+    isSortTooltipOpenSecond: false,
+    isHintTooltipOpenSecond: false,
   };
 
   handleKeyboardSortinput = e => {
@@ -85,20 +87,39 @@ class TableHeadCell extends React.Component {
     return false;
   };
 
+  handleKeyboardSortExtendedinput = (e, newIndex) => {
+    if (e.key === 'Enter') {
+      this.props.toggleSort(this.props.index, newIndex);
+    }
+
+    return false;
+  };
+
   handleSortClick = () => {
     this.props.toggleSort(this.props.index);
   };
 
+  handleSortExtendedClick = (newIndex) => {
+    this.props.toggleSort(this.props.index, newIndex);
+  };
+
   render() {
-    const { isSortTooltipOpen, isHintTooltipOpen } = this.state;
-    const { children, classes, options, sortDirection, sort, hint, print, column } = this.props;
+    const { isSortTooltipOpen, isHintTooltipOpen, isSortTooltipOpenSecond, isHintTooltipOpenSecond } = this.state;
+    const { activeColumn, activeSubColumn, children, classes, options, sortDirection, sort, hint, print, column } = this.props;
     const sortActive = sortDirection !== 'none' && sortDirection !== undefined ? true : false;
     const ariaSortDirection = sortDirection === 'none' ? false : sortDirection;
 
     const sortLabelProps = {
       classes: { root: classes.sortLabelRoot },
-      active: sortActive,
-      hideSortIcon: true,
+      active: sortActive && this.props.index === activeColumn && activeSubColumn === null,
+      hideSortIcon: sortActive && this.props.index === activeColumn && activeSubColumn === null,
+      ...(ariaSortDirection ? { direction: sortDirection } : {}),
+    };
+
+    const sortLabelPropsSecond = {
+      classes: { root: classes.sortLabelRoot },
+      active: sortActive && this.props.index === activeColumn && activeSubColumn !== null,
+      hideSortIcon: sortActive && this.props.index === activeColumn && activeSubColumn !== null,
       ...(ariaSortDirection ? { direction: sortDirection } : {}),
     };
 
@@ -111,61 +132,120 @@ class TableHeadCell extends React.Component {
     return (
       <TableCell className={cellClass} scope={'col'} sortDirection={ariaSortDirection}>
         {options.sort && sort ? (
-          <Tooltip
-            title={
-              options.textLabels.body.columnHeaderTooltip
-                ? options.textLabels.body.columnHeaderTooltip(column)
-                : options.textLabels.body.toolTip
-            }
-            placement={'bottom-start'}
-            classes={{
-              tooltip: classes.tooltip,
-            }}
-            enterDelay={300}
-            classes={{ popper: classes.mypopper }}
-            open={isSortTooltipOpen}
-            onOpen={() =>
-              isHintTooltipOpen
-                ? this.setState({ isSortTooltipOpen: false })
-                : this.setState({ isSortTooltipOpen: true })
-            }
-            onClose={() => this.setState({ isSortTooltipOpen: false })}>
-            <span
-              role="button"
-              onKeyUp={this.handleKeyboardSortinput}
-              onClick={this.handleSortClick}
-              className={classes.toolButton}
-              tabIndex={0}>
-              <div
-                className={classNames({
-                  [classes.data]: true,
-                  [classes.sortActive]: sortActive,
-                })}>
-                {children}
-              </div>
-              <div className={classes.sortAction}>
-                <TableSortLabel {...sortLabelProps} />
-                {hint && (
-                  <Tooltip
-                    title={hint}
-                    placement={'bottom-end'}
-                    classes={{
-                      tooltip: classes.tooltip,
-                    }}
-                    enterDelay={300}
-                    classes={{ popper: classes.mypopper }}
-                    open={isHintTooltipOpen}
-                    onOpen={() => this.setState({ isSortTooltipOpen: false, isHintTooltipOpen: true })}
-                    onClose={() => this.setState({ isHintTooltipOpen: false })}>
-                    <HelpIcon
-                      className={!sortActive ? classes.hintIconAlone : classes.hintIconWithSortIcon}
-                      fontSize="small"
-                    />
-                  </Tooltip>
-                )}
-              </div>
-            </span>
-          </Tooltip>
+          <React.Fragment>
+            <Tooltip
+              title={
+                options.textLabels.body.columnHeaderTooltip
+                  ? options.textLabels.body.columnHeaderTooltip(column)
+                  : options.textLabels.body.toolTip
+              }
+              placement={'bottom-start'}
+              classes={{
+                tooltip: classes.tooltip,
+              }}
+              enterDelay={300}
+              classes={{ popper: classes.mypopper }}
+              open={isSortTooltipOpen}
+              onOpen={() =>
+                isHintTooltipOpen
+                  ? this.setState({ isSortTooltipOpen: false })
+                  : this.setState({ isSortTooltipOpen: true })
+              }
+              onClose={() => this.setState({ isSortTooltipOpen: false })}>
+              <span
+                role="button"
+                onKeyUp={this.handleKeyboardSortinput}
+                onClick={this.handleSortClick}
+                className={classes.toolButton}
+                tabIndex={0}>
+                <div
+                  className={classNames({
+                    [classes.data]: true,
+                    [classes.sortActive]: sortActive,
+                  })}>
+                  {children}
+                </div>
+                <div className={classes.sortAction}>
+                  <TableSortLabel {...sortLabelProps} />
+                  {hint && (
+                    <Tooltip
+                      title={hint}
+                      placement={'bottom-end'}
+                      classes={{
+                        tooltip: classes.tooltip,
+                      }}
+                      enterDelay={300}
+                      classes={{ popper: classes.mypopper }}
+                      open={isHintTooltipOpen}
+                      onOpen={() => this.setState({ isSortTooltipOpen: false, isHintTooltipOpen: true })}
+                      onClose={() => this.setState({ isHintTooltipOpen: false })}>
+                      <HelpIcon
+                        className={!sortActive ? classes.hintIconAlone : classes.hintIconWithSortIcon}
+                        fontSize="small"
+                      />
+                    </Tooltip>
+                  )}
+                </div>
+              </span>
+            </Tooltip>
+            {column && column.multipleSortEnabled && column.multipleSortOptions && (
+              <Tooltip
+                title={
+                  options.textLabels.body.columnHeaderTooltip
+                    ? options.textLabels.body.columnHeaderTooltip(column)
+                    : options.textLabels.body.toolTip
+                }
+                placement={'bottom-start'}
+                classes={{
+                  tooltip: classes.tooltip,
+                }}
+                enterDelay={300}
+                classes={{ popper: classes.mypopper }}
+                open={isSortTooltipOpenSecond}
+                onOpen={() =>
+                  isHintTooltipOpenSecond
+                    ? this.setState({ isSortTooltipOpenSecond: false })
+                    : this.setState({ isSortTooltipOpenSecond: true })
+                }
+                onClose={() => this.setState({ isSortTooltipOpenSecond: false })}>
+                <span
+                  role="button"
+                  onKeyUp={(e) => this.handleKeyboardSortExtendedinput(e, column.multipleSortOptions.index)}
+                  onClick={() => this.handleSortExtendedClick(column.multipleSortOptions.index)}
+                  className={classes.toolButton}
+                  tabIndex={0}>
+                  <div
+                    className={classNames({
+                      [classes.data]: true,
+                      [classes.sortActive]: sortActive,
+                    })}>
+                    {column.multipleSortOptions.label}
+                  </div>
+                  <div className={classes.sortAction}>
+                    <TableSortLabel {...sortLabelPropsSecond} />
+                    {hint && (
+                      <Tooltip
+                        title={hint}
+                        placement={'bottom-end'}
+                        classes={{
+                          tooltip: classes.tooltip,
+                        }}
+                        enterDelay={300}
+                        classes={{ popper: classes.mypopper }}
+                        open={isHintTooltipOpenSecond}
+                        onOpen={() => this.setState({ isSortTooltipOpenSecond: false, isHintTooltipOpenSecond: true })}
+                        onClose={() => this.setState({ isHintTooltipOpenSecond: false })}>
+                        <HelpIcon
+                          className={!sortActive ? classes.hintIconAlone : classes.hintIconWithSortIcon}
+                          fontSize="small"
+                        />
+                      </Tooltip>
+                    )}
+                  </div>
+                </span>
+              </Tooltip>
+            )}
+          </React.Fragment>
         ) : (
           <div className={classes.sortAction}>
             {children}

@@ -219,6 +219,7 @@ class MUIDataTable extends React.Component {
   state = {
     announceText: null,
     activeColumn: null,
+    activeSubColumn: null,
     data: [],
     dataSubHeader: [],
     displayData: [],
@@ -868,7 +869,8 @@ class MUIDataTable extends React.Component {
     return column.sortDirection === 'asc' ? 'ascending' : 'descending';
   }
 
-  toggleSortColumn = index => {
+  toggleSortColumn = (index, secondIndex = null) => {
+    const newIndex = secondIndex === null ? index : secondIndex;
     this.setState(
       prevState => {
         let columns = cloneDeep(prevState.columns);
@@ -884,12 +886,13 @@ class MUIDataTable extends React.Component {
         }
 
         const orderLabel = this.getSortDirection(columns[index]);
-        const announceText = `Table now sorted by ${columns[index].name} : ${orderLabel}`;
+        const announceText = `Table now sorted by ${columns[newIndex].name} : ${orderLabel}`;
 
         let newState = {
           columns: columns,
           announceText: announceText,
           activeColumn: index,
+          activeSubColumn: secondIndex
         };
 
         if (this.options.serverSide) {
@@ -900,7 +903,7 @@ class MUIDataTable extends React.Component {
             selectedRows: prevState.selectedRows,
           };
         } else {
-          const sortedData = this.sortTable(data, index, newOrder);
+          const sortedData = this.sortTable(data, newIndex, newOrder);
 
           newState = {
             ...newState,
@@ -1289,6 +1292,7 @@ class MUIDataTable extends React.Component {
     const {
       announceText,
       activeColumn,
+      activeSubColumn,
       data,
       dataSubHeader,
       displayData,
@@ -1383,6 +1387,7 @@ class MUIDataTable extends React.Component {
             <TableHead
               columns={columns}
               activeColumn={activeColumn}
+              activeSubColumn={activeSubColumn}
               data={displayData}
               dataSubHeader={dataSubHeader}
               count={rowCount}
