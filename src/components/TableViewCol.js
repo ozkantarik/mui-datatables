@@ -89,7 +89,11 @@ class TableViewCol extends React.Component {
                       value={column.name}
                     />
                   }
-                  label={column.label}
+                  label={
+                    column && column.multipleSortEnabled && column.multipleSortOptions
+                      ? `${column.label} + ${column.multipleSortOptions.label}`
+                      : column.label
+                  }
                 />
               )
             );
