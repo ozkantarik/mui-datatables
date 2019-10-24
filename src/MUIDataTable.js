@@ -110,6 +110,7 @@ class MUIDataTable extends React.Component {
         PropTypes.shape({
           label: PropTypes.string,
           name: PropTypes.string.isRequired,
+          exportLabel: PropTypes.string,
           options: PropTypes.shape({
             display: PropTypes.oneOf(['true', 'false', 'excluded']),
             empty: PropTypes.bool,
@@ -462,11 +463,12 @@ class MUIDataTable extends React.Component {
         columnOptions = {
           name: column.name,
           label: column.label ? column.label : column.name,
+          exportLabel: column.exportLabel ? column.exportLabel : column.name,
           ...columnOptions,
           ...options,
         };
       } else {
-        columnOptions = { ...columnOptions, name: column, label: column };
+        columnOptions = { ...columnOptions, name: column, label: column, exportLabel: column };
       }
 
       columnData.push(columnOptions);

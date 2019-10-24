@@ -45,7 +45,7 @@ function createCSVDownload(columns, data, options) {
         .reduce(
           (soFar, column) =>
             column.download
-              ? soFar + '"' + replaceDoubleQuoteInString(column.name) + '"' + options.downloadOptions.separator
+              ? soFar + '"' + replaceDoubleQuoteInString(column.exportLabel) + '"' + options.downloadOptions.separator
               : soFar,
           '',
         )
@@ -110,7 +110,7 @@ function createTABDownload(columns, data, options) {
         .reduce(
           (soFar, column) =>
             column.download
-              ? soFar + replaceDoubleQuoteInString(column.name) + options.downloadOptions.separator
+              ? soFar + replaceDoubleQuoteInString(column.exportLabel) + options.downloadOptions.separator
               : soFar,
           '',
         )
@@ -173,7 +173,7 @@ function createXLSDownload(columns, data, options) {
       : replaceDoubleQuoteInString(columnData);
 
   const headColumns = columns => {
-    return columns.filter((_, index) => columns[index].download).map(column => replaceDoubleQuoteInString(column.name));
+    return columns.filter((_, index) => columns[index].download).map(column => replaceDoubleQuoteInString(column.exportLabel));
   };
   const XLSHead = headColumns(columns);
 

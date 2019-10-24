@@ -49,6 +49,7 @@ class Example extends React.Component {
       },
       {
         name: "Age",
+        exportLabel: "export age label",
         options: {
           filter: true,
           print: false,
@@ -146,7 +147,7 @@ class Example extends React.Component {
       fixedHeader: this.state.stickHead,
       fixedSubHeader: this.state.stickSummary,
       viewTableOptions: true,
-      downloadExtended: false,
+      downloadExtended: true,
       rowsPerPage: this.state.rowsPerPage,
       onStickHead: this.handleStickHead,
       onStickBlock: this.handleClick,
