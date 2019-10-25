@@ -47,6 +47,10 @@ class Example extends React.Component {
       {
         name: "phone.home",
         label: "Home Phone",
+        options: {
+          filter: true,
+          sort: false
+        }
       },
       {
         name: "phone.fake",
