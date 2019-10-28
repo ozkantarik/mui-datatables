@@ -50,7 +50,6 @@ const PrettoSlider = withStyles({
 
 function TableViewHeader(props) {
   const { classes, options, changeRowsPerPage } = props;
-console.log(options);
   const [state, setState] = React.useState({
     stickHead: options.fixedHeader,
     stickSummary: options.fixedSubHeader,
