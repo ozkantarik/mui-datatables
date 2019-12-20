@@ -53,7 +53,6 @@ function TableViewHeader(props) {
   const [state, setState] = React.useState({
     stickHead: options.fixedHeader,
     stickSummary: options.fixedSubHeader,
-    stickBlock: options.fixedBlock,
     rowsPerPage: options.rowsPerPage,
     minRowsPerPage: options.rowsPerPageOptions[0],
     maxRowPerPage: options.rowsPerPageOptions[options.rowsPerPageOptions.length - 1],
@@ -67,10 +66,6 @@ function TableViewHeader(props) {
         break;
       case 'stickSummary':
         options.onStickSummary(event.target.checked);
-        setState({ ...state, [name]: event.target.checked });
-        break;
-      case 'stickBlock':
-        options.onStickBlock(event.target.checked);
         setState({ ...state, [name]: event.target.checked });
         break;
       case 'rowsPerPage':
@@ -91,10 +86,6 @@ function TableViewHeader(props) {
       <FormControlLabel
         control={<Switch checked={state.stickSummary} onChange={handleChange('stickSummary')} value="stickSummary" />}
         label="Stick Summary"
-      />
-      <FormControlLabel
-        control={<Switch checked={state.stickBlock} onChange={handleChange('stickBlock')} value="stickBlock" />}
-        label="Stick Block"
       />
       <Typography gutterBottom>Number of Rows per Page</Typography>
       <PrettoSlider
