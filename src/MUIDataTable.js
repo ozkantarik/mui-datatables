@@ -949,6 +949,7 @@ class MUIDataTable extends React.Component {
         if (this.options.onChangeRowsPerPage) {
           this.options.onChangeRowsPerPage(this.state.rowsPerPage);
         }
+        document.getElementById("overlay-container").style.display = "none";
       },
     );
   };
