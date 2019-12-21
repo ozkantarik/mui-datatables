@@ -931,7 +931,8 @@ class MUIDataTable extends React.Component {
   };
 
   changeRowsPerPage = rows => {
-    if(document.getElementById("overlay-container") !== undefined || document.getElementById("overlay-container") !== null){
+    if(document.getElementById("overlay-container") !== null){
+      console.log("BLOCKED");
       document.getElementById("overlay-container").style.display = "block";
     }
 
