@@ -931,11 +931,6 @@ class MUIDataTable extends React.Component {
   };
 
   changeRowsPerPage = rows => {
-    if(document.getElementById("overlay-container") !== null){
-      console.log("BLOCKED");
-      document.getElementById("overlay-container").style.display = "block";
-    }
-
     const rowCount = this.options.count || this.state.displayData.length;
 
     this.setState(
@@ -949,7 +944,6 @@ class MUIDataTable extends React.Component {
         if (this.options.onChangeRowsPerPage) {
           this.options.onChangeRowsPerPage(this.state.rowsPerPage);
         }
-        document.getElementById("overlay-container").style.display = "none";
       },
     );
   };
