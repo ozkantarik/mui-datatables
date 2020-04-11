@@ -10,7 +10,8 @@ import TableSearch from './TableSearch';
 import SearchIcon from '@material-ui/icons/Search';
 import DownloadIcon from '@material-ui/icons/CloudDownload';
 import PrintIcon from '@material-ui/icons/Print';
-import ViewColumnIcon from '@material-ui/icons/ViewColumn';
+// import ViewColumnIcon from '@material-ui/icons/ViewColumn';
+import SettingsIcon from '@material-ui/icons/Settings';
 import TableChartIcon from '@material-ui/icons/TableChart';
 import FilterIcon from '@material-ui/icons/FilterList';
 import ReactToPrint from 'react-to-print';
@@ -344,7 +345,7 @@ class TableToolbar extends React.Component {
                 buttonRef={el => (this.searchButton = el)}
                 classes={{ root: this.getActiveIcon(classes, 'search') }}
                 onClick={this.setActiveIcon.bind(null, 'search')}>
-                <SearchIcon />
+                <FilterIcon />
               </IconButton>
             </Tooltip>
           )}
@@ -414,7 +415,7 @@ class TableToolbar extends React.Component {
                     aria-label={viewColumns}
                     classes={{ root: this.getActiveIcon(classes, 'viewcolumns') }}
                     onClick={this.setActiveIcon.bind(null, 'viewcolumns')}>
-                    <ViewColumnIcon />
+                    <TableChartIcon />
                   </IconButton>
                 </Tooltip>
               }
@@ -433,7 +434,7 @@ class TableToolbar extends React.Component {
                     aria-label={viewTableOptions}
                     classes={{ root: this.getActiveIcon(classes, 'viewTableOptions') }}
                     onClick={this.setActiveIcon.bind(null, 'viewTableOptions')}>
-                    <TableChartIcon />
+                    <SettingsIcon/>
                   </IconButton>
                 </Tooltip>
               }
@@ -448,7 +449,7 @@ class TableToolbar extends React.Component {
               }
             />
           )}
-          {options.filter && (
+          {/* {options.filter && (
             <Popover
               refExit={this.setActiveIcon.bind(null)}
               classes={{ paper: classes.filterPaper }}
@@ -475,7 +476,7 @@ class TableToolbar extends React.Component {
                 />
               }
             />
-          )}
+          )} */}
           {options.customToolbar && options.customToolbar()}
         </div>
       </Toolbar>
